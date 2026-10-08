@@ -1,7 +1,7 @@
 import { and, desc, eq } from "drizzle-orm";
 
 import { db } from "./index";
-import { task } from "./schema/task";
+import { task } from "./schema/tasks";
 
 export type Task = typeof task.$inferSelect;
 
