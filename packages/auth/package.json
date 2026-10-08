@@ -1,0 +1,29 @@
+{
+  "name": "@Zlo/auth",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@Zlo/db": "workspace:*",
+    "@Zlo/env": "workspace:*",
+    "@better-auth/drizzle-adapter": "1.6.22",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@Zlo/config": "workspace:*",
+    "typescript": "^6.0.3"
+  }
+}
