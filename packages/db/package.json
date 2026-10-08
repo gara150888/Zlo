@@ -1,11 +1,31 @@
 {
   "name": "@Zlo/db",
   "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": {
+      "types": "./src/index.ts",
       "default": "./src/index.ts"
     },
+    "./schema": {
+      "types": "./src/schema/index.ts",
+      "default": "./src/schema/index.ts"
+    },
+    "./schema/index": {
+      "types": "./src/schema/index.ts",
+      "default": "./src/schema/index.ts"
+    },
+    "./schema/task": {
+      "types": "./src/schema/tasks/index.ts",
+      "default": "./src/schema/tasks/index.ts"
+    },
+    "./schema/*": {
+      "types": "./src/schema/*/index.ts",
+      "default": "./src/schema/*/index.ts"
+    },
     "./*": {
+      "types": "./src/*.ts",
       "default": "./src/*.ts"
     }
   },

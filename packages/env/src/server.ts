@@ -8,6 +8,9 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string().min(32),
     BETTER_AUTH_URL: z.url(),
     CORS_ORIGIN: z.url(),
+    INSTAGRAM_ENCRYPTION_KEY: z
+      .string()
+      .length(64, "INSTAGRAM_ENCRYPTION_KEY must be 64 hex characters"),
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
