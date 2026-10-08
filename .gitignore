@@ -3,6 +3,9 @@ node_modules
 .pnp
 .pnp.js
 
+# VS Code
+.vscode/*
+
 # Build outputs
 dist
 build
