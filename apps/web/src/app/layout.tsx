@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
-import "../index.css";
-import Header from "@/components/header";
 import Providers from "@/components/providers";
+
+import { TooltipProvider } from "@/components/ui/tooltip"
+import "../index.css";
 
 export const metadata: Metadata = {
   title: "Zlo",
@@ -19,8 +20,7 @@ export default function RootLayout({
       <body suppressHydrationWarning className="font-sans antialiased">
         <Providers>
           <div className="grid grid-rows-[auto_1fr] h-svh">
-            {/* <Header />   */}
-            {children}
+            <TooltipProvider>{children}</TooltipProvider>
           </div>
         </Providers>
       </body>
