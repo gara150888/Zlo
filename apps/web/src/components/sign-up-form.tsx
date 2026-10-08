@@ -5,6 +5,7 @@ import z from "zod";
 
 import { authClient } from "@/lib/auth-client";
 
+import { GoogleAuthButton } from "./google-auth-button";
 import Loader from "./loader";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -144,11 +145,22 @@ export default function SignUpForm({ onSwitchToSignIn }: { onSwitchToSignIn: () 
         </form.Subscribe>
       </form>
 
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or</span>
+        </div>
+      </div>
+
+      <GoogleAuthButton mode="signup" />
+
       <div className="mt-4 text-center">
         <Button
           variant="link"
           onClick={onSwitchToSignIn}
-          className="text-indigo-600 hover:text-indigo-800"
+          className="text-primary hover:underline"
         >
           Already have an account? Sign In
         </Button>

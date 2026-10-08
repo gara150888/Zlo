@@ -4,8 +4,8 @@ Created with [Better Fullstack](https://github.com/Marve10s/Better-Fullstack).
 
 ## Applications and resources
 
-- **next** (typescript, frontend): `apps/web`; part `frontend:typescript:next`
-- **self** (typescript, backend): `apps/server`; part `backend:typescript:self`
+- **next** (TypeScript, frontend): `apps/web`; part `frontend:typescript:next`
+- **self** (TypeScript, backend): `apps/server`; part `backend:typescript:self`
 - **postgres** (universal, database): `packages/db`; part `database:universal:postgres`
 - **turborepo** (universal, workspaceRunner): `.`; part `workspacerunner:universal:turborepo`
 

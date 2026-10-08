@@ -4,7 +4,7 @@ This file provides context about the project for AI assistants.
 
 ## Project Overview
 
-- **Ecosystem**: Typescript
+- **Ecosystem**: TypeScript
 
 ## Tech Stack
 

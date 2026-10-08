@@ -6,6 +6,9 @@ node_modules
 # VS Code
 .vscode/*
 
+# Antigravity Agents
+.agents
+
 # Build outputs
 dist
 build

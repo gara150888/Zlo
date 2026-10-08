@@ -5,6 +5,7 @@ import z from "zod";
 
 import { authClient } from "@/lib/auth-client";
 
+import { GoogleAuthButton } from "./google-auth-button";
 import Loader from "./loader";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -52,14 +53,12 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
     <div className="mx-auto w-full mt-10 max-w-md p-6">
       <h1 className="mb-6 text-center text-3xl font-bold">Welcome Back</h1>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-        className="space-y-4"
-      >
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+        className="space-y-4" >
         <div>
           <form.Field name="email">
             {(field) => (
@@ -119,11 +118,22 @@ export default function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () 
         </form.Subscribe>
       </form>
 
+      <div className="relative my-4">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Or</span>
+        </div>
+      </div>
+
+      <GoogleAuthButton mode="signin" />
+
       <div className="mt-4 text-center">
         <Button
           variant="link"
           onClick={onSwitchToSignUp}
-          className="text-indigo-600 hover:text-indigo-800"
+          className="text-primary hover:underline"
         >
           Need an account? Sign Up
         </Button>
