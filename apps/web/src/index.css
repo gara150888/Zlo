@@ -233,11 +233,13 @@
   --nb-primary-hover: oklch(75% .183 55.934);
 
   /* Design System Colors from UI/UX Pro Max */
-  --color-primary: #2563EB; /* Trust blue */
+  --color-primary: #2563EB;
+  /* Trust blue */
   --color-primary-foreground: #FFFFFF;
   --color-secondary: #3B82F6;
   --color-secondary-foreground: #000000;
-  --color-accent: #EA580C; /* Accent/CTA */
+  --color-accent: #EA580C;
+  /* Accent/CTA */
   --color-accent-foreground: #000000;
   --color-background: #F8FAFC;
   --color-foreground: #1E293B;
@@ -334,9 +336,12 @@
   --color-secondary-foreground: #000000;
   --color-accent: #EA580C;
   --color-accent-foreground: #000000;
-  --color-background: #0F172A; /* Dark background */
-  --color-foreground: #F8FAFC; /* Light foreground */
-  --color-card: #1E293B; /* Dark card */
+  --color-background: #0F172A;
+  /* Dark background */
+  --color-foreground: #F8FAFC;
+  /* Light foreground */
+  --color-card: #1E293B;
+  /* Dark card */
   --color-card-foreground: #F8FAFC;
   --color-muted: #334155;
   --color-muted-foreground: #94A3B8;
@@ -440,4 +445,17 @@
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+.hero-move-trigger {
+  cursor: pointer;
+  color: var(--primary);
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  background: 0 0;
+  border: 0;
+  border-radius: .08em;
+  padding: 0;
+  position: relative;
 }
