@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ZapIcon, ChartNoAxesCombinedIcon, WorkflowIcon, HistoryIcon, BookOpenIcon, LifeBuoyIcon, TerminalIcon, Settings2Icon } from "lucide-react"
+import { BookOpenIcon, HistoryIcon, LayoutDashboardIcon, LifeBuoyIcon, Settings2Icon } from "lucide-react"
 
 const InstagramIcon = () => {
   return (
@@ -35,67 +35,6 @@ const data = {
       items: [],
     },
     {
-      title: "Instagram",
-      url: "/instagram",
-      icon: <InstagramIcon />,
-      items: [
-        {
-          title: "Accounts",
-          url: "/instagram/accounts",
-        },
-        {
-          title: "Media",
-          url: "/instagram/media",
-        },
-        {
-          title: "Comments",
-          url: "/instagram/comments",
-        },
-        {
-          title: "Messages",
-          url: "/instagram/messages",
-        },
-      ],
-    },
-    {
-      title: "Automations",
-      url: "/automations",
-      icon: <ZapIcon />,
-      items: [
-        {
-          title: "All Automations",
-          url: "/automations",
-        },
-        {
-          title: "Create Automation",
-          url: "/automations/new",
-        },
-        {
-          title: "Runs",
-          url: "/automations/runs",
-        },
-      ],
-    },
-    {
-      title: "Analytics",
-      url: "/analytics",
-      icon: <ChartNoAxesCombinedIcon />,
-      items: [
-        {
-          title: "Overview",
-          url: "/analytics",
-        },
-        {
-          title: "Automations",
-          url: "/analytics/automations",
-        },
-        {
-          title: "Engagement",
-          url: "/analytics/engagement",
-        },
-      ],
-    },
-    {
       title: "Settings",
       url: "/settings",
       icon: <Settings2Icon />,
@@ -103,30 +42,12 @@ const data = {
         {
           title: "General",
           url: "/settings",
-        },
-        {
-          title: "Instagram",
-          url: "/settings/instagram",
-        },
-        {
-          title: "Billing",
-          url: "/settings/billing",
-        },
+        }
       ],
     },
   ],
 
   projects: [
-    {
-      name: "Instagram Accounts",
-      url: "/instagram/accounts",
-      icon: <InstagramIcon />,
-    },
-    {
-      name: "Automation Rules",
-      url: "/automations",
-      icon: <WorkflowIcon />,
-    },
     {
       name: "Execution Logs",
       url: "/automations/runs",
