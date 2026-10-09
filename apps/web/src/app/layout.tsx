@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import Providers from "@/components/providers";
+import Providers from "@/components/layout/providers/providers";
 
 import { TooltipProvider } from "@/components/ui/tooltip"
 import "../index.css";
