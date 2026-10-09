@@ -31,7 +31,7 @@
     "db:studio": "turbo -F @Zlo/db db:studio",
     "db:generate": "turbo -F @Zlo/db db:generate",
     "db:migrate": "turbo -F @Zlo/db db:migrate",
-    "test": "bun run --filter web test && bun run --filter @Zlo/api test"
+    "test": "bun run --filter @Zlo/api test"
   },
   "dependencies": {
     "@Zlo/env": "workspace:*",

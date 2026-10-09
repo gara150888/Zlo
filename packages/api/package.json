@@ -7,6 +7,15 @@
     },
     "./*": {
       "default": "./src/*.ts"
+    },
+    "./server/*": {
+      "default": "./src/server/*.ts"
+    },
+    "./server/services/*": {
+      "default": "./src/server/services/*.ts"
+    },
+    "./server/services/automation/*": {
+      "default": "./src/server/services/automation/*.ts"
     }
   },
   "scripts": {
