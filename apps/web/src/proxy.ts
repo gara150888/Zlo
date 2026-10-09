@@ -5,6 +5,8 @@ export async function proxy(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);
   const { pathname } = request.nextUrl;
 
+  // comment
+
   const isAuthRoute = pathname.startsWith("/login");
   const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/settings");
 
