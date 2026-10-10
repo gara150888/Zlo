@@ -95,10 +95,11 @@ export const subscriptionFormSchema = z.object({
   logoUrl: z
     .string()
     .trim()
-    .max(500, "Keep the logo URL under 500 characters")
+    // Uploaded logos arrive as inline data URLs, so this allows more than a plain link.
+    .max(20_000, "Keep the logo URL under 20000 characters")
     .refine(
-      (value) => value === "" || /^https?:\/\/\S+$/.test(value),
-      "Enter a valid http(s) URL",
+      (value) => value === "" || /^(https?:\/\/\S+|data:image\/[a-zA-Z+]+;base64,)/.test(value),
+      "Enter a valid URL or uploaded image",
     ),
   amount: z
     .string()

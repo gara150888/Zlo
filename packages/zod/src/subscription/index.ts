@@ -26,7 +26,8 @@ export const subscriptionStatusEnum = z.enum([
 export const subscriptionInput = z.object({
   name: z.string().trim().min(1).max(100),
   provider: z.string().trim().max(100).optional().nullable(),
-  logoUrl: z.string().trim().max(500).optional().nullable(),
+  // Uploaded logos are stored as inline data URLs, so this is larger than a plain link.
+  logoUrl: z.string().trim().max(20_000).optional().nullable(),
   amountMinor: z.number().int().min(0).max(100_000_000),
   currency: z.string().regex(/^[A-Z]{3}$/).default("INR"),
   interval: billingIntervalEnum,

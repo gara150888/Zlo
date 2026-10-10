@@ -28,7 +28,7 @@ export function ProviderAvatar({
   return (
     <Avatar className={cn("size-7 rounded-md", className)}>
       {subscription.logoUrl ? (
-        <AvatarImage src={subscription.logoUrl} alt="" />
+        <AvatarImage className="object-contain p-[0.15rem]" src={subscription.logoUrl} alt="" />
       ) : null}
       <AvatarFallback className="rounded-md bg-muted text-[0.625rem] font-medium text-muted-foreground">
         {initials || "?"}
