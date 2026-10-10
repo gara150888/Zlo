@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning className="font-sans antialiased">
         <Providers>
-          <div className="grid grid-rows-[auto_1fr] h-svh">
+          <div className="flex flex-col flex-1 w-full h-svh">
             <TooltipProvider>{children}</TooltipProvider>
           </div>
         </Providers>
