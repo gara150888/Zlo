@@ -1,0 +1,50 @@
+{
+  "name": "@Zlo/zod",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./subscription": {
+      "types": "./src/subscription/index.ts",
+      "default": "./src/subscription/index.ts"
+    },
+    "./reminder": {
+      "types": "./src/reminder/index.ts",
+      "default": "./src/reminder/index.ts"
+    },
+    "./reminder-preference": {
+      "types": "./src/reminder-preference/index.ts",
+      "default": "./src/reminder-preference/index.ts"
+    },
+    "./dashboard": {
+      "types": "./src/dashboard/index.ts",
+      "default": "./src/dashboard/index.ts"
+    },
+    "./analytics": {
+      "types": "./src/analytics/index.ts",
+      "default": "./src/analytics/index.ts"
+    },
+    "./calculations": {
+      "types": "./src/calculations/index.ts",
+      "default": "./src/calculations/index.ts"
+    },
+    "./*": {
+      "types": "./src/*/index.ts",
+      "default": "./src/*/index.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@Zlo/config": "workspace:*",
+    "typescript": "^6.0.3"
+  }
+}

@@ -8,7 +8,12 @@ export async function proxy(request: NextRequest) {
   // comment
 
   const isAuthRoute = pathname.startsWith("/login");
-  const isProtectedRoute = pathname.startsWith("/dashboard") || pathname.startsWith("/settings");
+  const isProtectedRoute =
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/subscriptions") ||
+    pathname.startsWith("/renewals") ||
+    pathname.startsWith("/analytics") ||
+    pathname.startsWith("/settings");
 
   if (isProtectedRoute && !sessionCookie) {
     const loginUrl = new URL("/login", request.url);

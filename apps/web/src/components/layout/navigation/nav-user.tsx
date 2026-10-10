@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { authClient } from "@/lib/auth-client"
-import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, CreditCardIcon, LogOutIcon, MonitorIcon, MoonIcon, SparklesIcon, SunIcon } from "lucide-react"
+import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, LogOutIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTheme } from "next-themes"
@@ -86,12 +86,6 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <SparklesIcon /> Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <SunIcon /> Theme
@@ -110,13 +104,10 @@ export function NavUser() {
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
-              <DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/settings" />}>
                 <BadgeCheckIcon /> Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon /> Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/settings" />}>
                 <BellIcon /> Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>

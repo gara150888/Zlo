@@ -8,6 +8,9 @@
     "./*": {
       "default": "./src/*.ts"
     },
+    "./routers/*": {
+      "default": "./src/routers/*.ts"
+    },
     "./server/*": {
       "default": "./src/server/*.ts"
     },
@@ -26,6 +29,7 @@
     "@Zlo/auth": "workspace:*",
     "@Zlo/db": "workspace:*",
     "@Zlo/env": "workspace:*",
+    "@Zlo/zod": "workspace:*",
     "@trpc/client": "catalog:",
     "@trpc/server": "catalog:",
     "dotenv": "catalog:",
