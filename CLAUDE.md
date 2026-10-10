@@ -92,6 +92,27 @@ User code outside an explicit Better Fullstack managed region is not generator-o
 
 <!-- </better-fullstack:recipes> -->
 
+## Cross-Session AI Memory (MANDATORY)
+
+`AI_MEMORY.md` is the shared long-term memory for AI sessions working on this repo. It exists so no
+session repeats work, re-litigates decisions, or retries dead ends. It is committed to git on purpose
+— keep it committed.
+
+Every session MUST follow its protocol:
+
+1. **Read** `AI_MEMORY.md` in full at the start, before writing code, together with
+   `git log --oneline -10` and `git status` to reconcile reality with what it records.
+2. **Use** it during the session: check its "Do Not Repeat", "Known Issues", and "Decisions"
+   sections before starting a task, and use its repo map instead of re-exploring from scratch. Add
+   new non-obvious findings immediately, not only at the end.
+3. **Update** it before handing back: add exactly one entry to "Session Log" (newest first), rewrite
+   "Handoff / Next Steps" for a blind successor, prune it to stay under ~200 lines, and include the
+   file in your commit (`git add AI_MEMORY.md`). An uncommitted memory file is invisible to the
+   next session.
+
+Keep `AI_MEMORY.md` updated when: a task is completed, a decision is made, an approach is abandoned
+as a dead end, a new service or package is added, or build/dev workflows change.
+
 ## Maintenance
 
 Keep CLAUDE.md updated when:

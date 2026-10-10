@@ -25,8 +25,10 @@ import { authClient } from "@/lib/auth-client";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export function NavUser() {
+  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const user = {
     name: session?.user?.name,
@@ -112,7 +114,19 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              className="cursor-pointer"
+              onClick={() => {
+                authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      router.push("/");
+                    },
+                  },
+                });
+              }}
+            >
               <LogOutIcon
               />
               Log out
