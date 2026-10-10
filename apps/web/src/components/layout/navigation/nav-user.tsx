@@ -5,13 +5,18 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -20,15 +25,16 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { ChevronsUpDownIcon, SparklesIcon, BadgeCheckIcon, CreditCardIcon, BellIcon, LogOutIcon } from "lucide-react"
-import { authClient } from "@/lib/auth-client";
-import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton"
+import { authClient } from "@/lib/auth-client"
+import { BadgeCheckIcon, BellIcon, ChevronsUpDownIcon, LogOutIcon, MonitorIcon, MoonIcon, SunIcon } from "lucide-react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useTheme } from "next-themes"
 
 export function NavUser() {
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
   const { data: session, isPending } = authClient.useSession();
   const user = {
     name: session?.user?.name,
@@ -52,11 +58,7 @@ export function NavUser() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
-            }
-          >
+          <DropdownMenuTrigger render={<SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />}>
             <Avatar>
               <AvatarImage src={user.avatar || ""} alt={user.name} />
               <AvatarFallback>CN</AvatarFallback>
@@ -67,12 +69,7 @@ export function NavUser() {
             </div>
             <ChevronsUpDownIcon className="ml-auto size-4" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
-            align="end"
-            sideOffset={4}
-          >
+          <DropdownMenuContent className="min-w-56 rounded-lg" side={isMobile ? "bottom" : "right"} align="end" sideOffset={4}>
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
@@ -89,47 +86,42 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <SparklesIcon
-                />
-                Upgrade to Pro
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <SunIcon /> Theme
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem onClick={() => setTheme("light")} className={theme === "light" ? "bg-muted" : ""}>
+                      <SunIcon /> Light
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setTheme("dark")} className={theme === "dark" ? "bg-muted" : ""}>
+                      <MoonIcon /> Dark
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setTheme("system")} className={theme === "system" ? "bg-muted" : ""}>
+                      <MonitorIcon /> System Default
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+              <DropdownMenuItem render={<Link href="/settings" />}>
+                <BadgeCheckIcon /> Account
+              </DropdownMenuItem>
+              <DropdownMenuItem render={<Link href="/settings" />}>
+                <BellIcon /> Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheckIcon
-                />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCardIcon
-                />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BellIcon
-                />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              variant="destructive"
-              className="cursor-pointer"
-              onClick={() => {
-                authClient.signOut({
-                  fetchOptions: {
-                    onSuccess: () => {
-                      router.push("/");
-                    },
+            <DropdownMenuItem variant="destructive" className="cursor-pointer" onClick={() => {
+              authClient.signOut({
+                fetchOptions: {
+                  onSuccess: () => {
+                    router.push("/");
                   },
-                });
-              }}
-            >
-              <LogOutIcon
-              />
-              Log out
+                },
+              });
+            }}>
+              <LogOutIcon /> Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

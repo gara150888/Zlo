@@ -80,6 +80,16 @@ start of work; updating it is mandatory before handing back.**
 
 <!-- Add new entries at the TOP of the list, immediately above this line. Keep the last ~10. -->
 
+- `2026-10-10` · branch `db-and-router-and-services-setup` · Implemented full tRPC router suite (subscription, dashboard, reminder, reminderPreference, analytics) and @Zlo/zod schemas.
+  Files: `packages/zod/src/*`, `packages/api/src/routers/*`, `packages/api/package.json`
+  Outcome: Built all requested CRUD, dashboard, reminder, preference, and analytics procedures matching TASK.md specs. Full typecheck on @Zlo/api and web passed with 0 errors.
+  Follow-up: Build out remaining frontend pages in apps/web.
+
+- `2026-10-10` · branch `db-and-router-and-services-setup` · Fixed `@Zlo/zod` package configuration and imports in `packages/api/src/routers/subscription.ts`.
+  Files: `packages/zod/package.json`, `packages/zod/tsconfig.json`, `packages/zod/src/index.ts`, `packages/api/package.json`, `packages/api/src/routers/subscription.ts`
+  Outcome: Configured `packages/zod` as `@Zlo/zod` with exports, linked in `@Zlo/api`, fixed Zod `.extend` and types in subscription router. Type check passes.
+  Follow-up: Wire `subscriptionRouter` into `packages/api/src/routers/index.ts`.
+
 - `2026-10-10` · branch `master` · Created `AI_MEMORY.md` (this file) and wired read/update rules
   into `AGENTS.md` and `CLAUDE.md`.
   Files: `AI_MEMORY.md`, `AGENTS.md`, `CLAUDE.md`
@@ -92,6 +102,7 @@ start of work; updating it is mandatory before handing back.**
 
 <!-- Record the decision AND why, so a future session can accept it instead of re-proposing it. -->
 
+- `2026-10-10` — Monorepo workspace packages use `@Zlo/<name>` casing (e.g. `@Zlo/zod`) to align with monorepo convention and prevent collision with npm catalog dependencies (e.g. `zod`).
 - `2026-10-10` — AI memory is a single committed file (`AI_MEMORY.md`) rather than per-session
   notes: uncommitted or per-machine notes are invisible to the next machine/session.
 
@@ -112,17 +123,18 @@ start of work; updating it is mandatory before handing back.**
   `bun run --filter web test`.
 - `packages/api` ships `dist/` and `.turbo/` build outputs locally; these are gitignored but can
   make a repo look stale/compiled when grepping. Prefer `src/`.
+- `packages/db/src/tasks.ts` imports from deleted/untracked `./schema/tasks`.
 
 ---
 
 ## Uncommitted / In Flight (recheck with `git status`)
 
-- (none — memory last committed)
+- Working branch `db-and-router-and-services-setup` has in-flight subscription schema, zod package, and API router suite.
 
 ---
 
 ## Handoff / Next Steps
 
-- No task in progress. Pick up feature work from `git log`; automation service entry point is
-  `packages/api/src/server/services/automation/index.ts` and tRPC routers are under
-  `packages/api/src/routers`.
+- All 5 tRPC routers (`subscription`, `dashboard`, `reminder`, `reminderPreference`, `analytics`) are mounted in `appRouter` and type-checking cleanly. Next step is building out the frontend UI in `apps/web/src/app/(protected)` (dashboard, subscriptions, calendar, settings, analytics).
+
+
