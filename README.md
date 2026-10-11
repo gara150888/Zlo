@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./assets/logo_white.png" alt="Zlo Logo" width="98" />
+<img src="/assets/logo_white.png" alt="Zlo Logo" width="98" />
 
 # Zlo
 
