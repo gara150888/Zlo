@@ -14,24 +14,12 @@ import { ErrorState, TableSkeleton } from "@/components/dashboard/states";
 import { useSubscriptions } from "@/components/dashboard/use-subscriptions";
 
 export default function SubscriptionsPage() {
-  const {
-    subscriptions,
-    isPending,
-    error,
-    refetch,
-  } = useSubscriptions();
+  const { subscriptions, isPending, error, refetch } = useSubscriptions();
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Subscription | null>(null);
 
-  const openCreate = () => {
-    setEditing(null);
-    setFormOpen(true);
-  };
-
-  const openEdit = (subscription: Subscription) => {
-    setEditing(subscription);
-    setFormOpen(true);
-  };
+  const openCreate = () => { setEditing(null); setFormOpen(true); };
+  const openEdit = (subscription: Subscription) => { setEditing(subscription); setFormOpen(true); };
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 p-4 md:p-6 lg:p-8">

@@ -43,6 +43,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { LogoField } from "./logo-field";
 import { useSubscriptionMutations } from "./use-subscriptions";
 
 function formValuesFromSubscription(
@@ -146,9 +147,10 @@ export function SubscriptionFormDialog({
           }}
           className="grid gap-3 sm:grid-cols-2"
         >
+
           <form.Field name="name">
             {(field) => (
-              <div className="grid gap-1.5 sm:col-span-2">
+              <div className="grid gap-1.5">
                 <Label htmlFor={field.name}>Name</Label>
                 <Input
                   id={field.name}
@@ -182,16 +184,22 @@ export function SubscriptionFormDialog({
 
           <form.Field name="logoUrl">
             {(field) => (
-              <div className="grid gap-1.5">
-                <Label htmlFor={field.name}>Logo URL</Label>
-                <Input
-                  id={field.name}
-                  name={field.name}
-                  placeholder="https://example.com/logo.png"
+              <div className="grid gap-1.5 sm:col-span-2">
+                <Label htmlFor="logoUrl">Logo</Label>
+                <LogoField
                   value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(event) => field.handleChange(event.target.value)}
+                  onChange={field.handleChange}
+                  onProviderChange={(name) =>
+                    form.setFieldValue("provider", name)
+                  }
+                  fallbackText={
+                    form.getFieldValue("name") || form.getFieldValue("provider")
+                  }
                 />
+                <p className="text-xs text-muted-foreground">
+                  Search the logo library to fill the provider automatically,
+                  upload your own image, or paste a link.
+                </p>
                 <FieldErrors errors={field.state.meta.errors} />
               </div>
             )}

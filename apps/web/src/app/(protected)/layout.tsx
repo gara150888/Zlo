@@ -104,7 +104,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </Button>
             </div>
           </header>
-          <div className="flex flex-1 flex-col">{children}</div>
+          <div className="flex flex-1 flex-col overflow-y-auto">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </>

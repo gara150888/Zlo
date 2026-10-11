@@ -80,6 +80,15 @@ start of work; updating it is mandatory before handing back.**
 
 <!-- Add new entries at the TOP of the list, immediately above this line. Keep the last ~10. -->
 
+- `2026-10-11` · branch `staring-project-root` · Rewrote root `README.md` as a GitHub project
+  presentation page for the subscription-tracker product.
+   Files: `README.md`
+   Outcome: README now covers positioning, implemented features, stack badges, monorepo layout,
+   env-var table, command reference, billing-normalisation math, testing, and an honest
+   status/roadmap section (reminder email delivery + landing page still outstanding). All content
+   verified against actual manifests, schema, and source. Uncommitted, per no-commit-without-approval rule.
+   Follow-up: commit README (plus the icon-path move and analytics edit) when authorised.
+
 - `2026-10-10` · branch `db-and-router-and-services-setup` · Implemented full tRPC router suite (subscription, dashboard, reminder, reminderPreference, analytics) and @Zlo/zod schemas.
   Files: `packages/zod/src/*`, `packages/api/src/routers/*`, `packages/api/package.json`
   Outcome: Built all requested CRUD, dashboard, reminder, preference, and analytics procedures matching TASK.md specs. Full typecheck on @Zlo/api and web passed with 0 errors.
@@ -129,12 +138,21 @@ start of work; updating it is mandatory before handing back.**
 
 ## Uncommitted / In Flight (recheck with `git status`)
 
-- Working branch `db-and-router-and-services-setup` has in-flight subscription schema, zod package, and API router suite.
+- Rewritten root `README.md` (presentation page) and updated `AI_MEMORY.md`.
+- Icon relocation: `apps/web/public/assets/app_icon/*` deleted, `apps/web/public/app_icon/`
+  untracked, plus new `apps/web/public/assets/logo_final.jfif`.
+- Modified `apps/web/src/app/(protected)/analytics/page.tsx`.
 
 ---
 
 ## Handoff / Next Steps
 
-- All 5 tRPC routers (`subscription`, `dashboard`, `reminder`, `reminderPreference`, `analytics`) are mounted in `appRouter` and type-checking cleanly. Next step is building out the frontend UI in `apps/web/src/app/(protected)` (dashboard, subscriptions, calendar, settings, analytics).
+- Root `README.md` is now the GitHub presentation page (positioning, features, badges, env table,
+  commands, billing math, honest status/roadmap). Working tree also holds an icon move
+  (`public/assets/app_icon/*` → `public/app_icon/*`, referenced by `app-sidebar.tsx` via
+  `/assets/app_icon/favicon-32x32.png`), a new `public/assets/logo_final.jfif`, and an edit to
+  `(protected)/analytics/page.tsx` — all uncommitted.
+- Next frontend step per TASK.md Phase 3: detail route `/subscriptions/[id]`, then the renewal
+  calendar view; reminder email delivery remains the main backend gap.
 
 

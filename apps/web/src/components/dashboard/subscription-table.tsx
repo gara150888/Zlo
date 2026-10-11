@@ -91,15 +91,15 @@ const sortableColumns: {
   label: string;
   className?: string;
 }[] = [
-  { key: "name", label: "Service" },
-  { key: "amount", label: "Amount", className: "text-right" },
-  {
-    key: "nextBillingDate",
-    label: "Next billing",
-    className: "hidden sm:table-cell",
-  },
-  { key: "createdAt", label: "Added", className: "hidden lg:table-cell" },
-];
+    { key: "name", label: "Service" },
+    { key: "amount", label: "Amount", className: "text-right" },
+    {
+      key: "nextBillingDate",
+      label: "Next billing",
+      className: "hidden sm:table-cell",
+    },
+    { key: "createdAt", label: "Added", className: "hidden lg:table-cell" },
+  ];
 
 export type SubscriptionTableProps = {
   subscriptions: Subscription[] | undefined;
@@ -109,25 +109,21 @@ export type SubscriptionTableProps = {
   className?: string;
 };
 
-export function SubscriptionTable({
-  subscriptions,
-  loading = false,
-  onEdit,
-  onAdd,
-  className,
-}: SubscriptionTableProps) {
+export function SubscriptionTable({ subscriptions, loading = false, onEdit, onAdd, className }: SubscriptionTableProps) {
+
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState("all");
+
   const [sort, setSort] = useState<{ key: SortKey; direction: SortDirection }>({
     key: "nextBillingDate",
     direction: "asc",
   });
+
   const [page, setPage] = useState(1);
   const [pendingDelete, setPendingDelete] = useState<Subscription | null>(null);
 
-  const { deleteSubscription, cancelSubscription, restoreSubscription } =
-    useSubscriptionMutations();
+  const { deleteSubscription, cancelSubscription, restoreSubscription } = useSubscriptionMutations();
 
   const rows = useMemo(() => subscriptions ?? [], [subscriptions]);
 
@@ -175,8 +171,7 @@ export function SubscriptionTable({
     safePage * PAGE_SIZE,
   );
 
-  const hasActiveFilters =
-    search.trim() !== "" || category !== "all" || status !== "all";
+  const hasActiveFilters = search.trim() !== "" || category !== "all" || status !== "all";
 
   const clearFilters = () => {
     setSearch("");
@@ -197,11 +192,13 @@ export function SubscriptionTable({
     mutation: "cancel" | "restore" | "delete",
     subscription: Subscription,
   ) => {
+
     const labels = {
       cancel: "Subscription cancelled",
       restore: "Subscription restored",
       delete: "Subscription deleted",
     };
+
     try {
       if (mutation === "cancel") {
         await cancelSubscription.mutateAsync({ id: subscription.id });
@@ -449,8 +446,8 @@ export function SubscriptionTable({
                             </DropdownMenuItem>
                           ) : null}
                           {subscription.status === "cancelled" ||
-                          subscription.status === "paused" ||
-                          subscription.status === "expired" ? (
+                            subscription.status === "paused" ||
+                            subscription.status === "expired" ? (
                             <DropdownMenuItem
                               onClick={() => runMutation("restore", subscription)}
                             >
