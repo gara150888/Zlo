@@ -69,10 +69,9 @@ const data: {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
-  const logoWhite = "/assets/logo_white.png"
-  const logoBlack = "/assets/logo_black.png"
+  const { resolvedTheme } = useTheme()
 
-  const { theme } = useTheme()
+  const logo = resolvedTheme === "dark" ? "/assets/logo_white.png" : "/assets/logo_black.png";
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -81,7 +80,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent text-sidebar-primary-foreground">
-                <img src={theme === "dark" ? logoWhite : logoBlack} alt="Zlo logo" className="size-7" />
+                <img data-no-hover data-no-focus-ring suppressHydrationWarning={true} src={logo} alt="Zlo logo" className="size-7" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">Zlo</span>

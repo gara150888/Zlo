@@ -6,13 +6,21 @@ import { ArrowRight, LayoutDashboardIcon } from "lucide-react";
 import { Announcement } from "@/components/layout/announcement/announcement";
 import { Button } from "@/components/ui/button";
 import { Dither } from "@/components/ui/beams";
+import { useTheme } from "next-themes";
 
 export default function Hero() {
+  const { resolvedTheme } = useTheme();
+
+  const logo = resolvedTheme === "dark" ? "/assets/logo_white.png" : "/assets/logo_black.png";
+
   return (
     <main className="flex flex-1 items-center justify-center">
       <Dither color="#9fb4ff" scale={3} speed={1} interactive={false} pixelSize={3} className="-z-10 opacity-10" />
 
       <div className="flex max-w-xl flex-col items-center gap-6 px-6 text-center z-10">
+
+        <img data-no-hover data-no-focus-ring suppressHydrationWarning={true} src={logo} alt="Zlo logo" className="size-20 sm:size-24" />
+
         <Announcement href="/dashboard" tag="New" className="hidden md:flex">
           Renewal reminders and spending analytics
         </Announcement>
