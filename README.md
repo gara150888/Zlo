@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://i.ibb.co/JFdBjmZ2/0edbd68d-49cf-4e21-8248-6debe3520781.jpg" alt="Zlo" width="88" />
+<img src="https://i.ibb.co/8nL5FjHn/log.png" alt="Zlo" width="88" />
 
 # Zlo
 
