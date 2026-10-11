@@ -80,6 +80,22 @@ start of work; updating it is mandatory before handing back.**
 
 <!-- Add new entries at the TOP of the list, immediately above this line. Keep the last ~10. -->
 
+- `2026-10-11` · branch `staring-project-root` · Fixed the home page: copy, dead link, and non-client-side navigation.
+   Files: `apps/web/src/app/page.tsx`, `apps/web/src/components/layout/announcement/announcement.tsx`, `README.md`
+   Outcome: The landing page was still generator starter copy ("Ship interfaces that feel alive")
+   and had two defects: `href="/blog/v2"` pointed at a route that does not exist (404), and both
+   announcements were plain `<a>` tags so every internal nav did a full document reload. Replaced
+   the copy with product-accurate text, removed the dead link, and switched CTAs to real routes
+   only (`/login`, `/dashboard`) via `next/link` + base-ui `Button render={<Link/>}`. Made
+   `Announcement` (its only consumer was page.tsx) render `<Link>` when `href` starts with "/",
+   falling back to a plain `<a>` for external/static use.
+   Gotcha hit: `next.config.ts` sets `typedRoutes: true`, so `Link href` rejects a plain `string`;
+   cast internal hrefs to the existing `AppRoute` union in `@/lib/routes`.
+   Verified: `bun run check-types` 5/5, `bun run build` green, and the prerendered
+   `apps/web/.next/server/app/index.html` now contains only `/dashboard`, `/login` (+ favicon),
+   with `<h1>` = "Know what your subscriptions really cost".
+   Follow-up: none for the landing page; roadmap item marked done in README.
+
 - `2026-10-11` · branch `staring-project-root` · Fixed the Vercel production build failure (`Invalid environment variables` at page-data collection).
    Files: `turbo.json`
    Outcome: Root cause was **Turbo strict env mode, not Vercel**. Turbo 2.x defaults to
@@ -186,7 +202,6 @@ start of work; updating it is mandatory before handing back.**
 - New `vercel.json` (Vercel services mode, single `web` service) and updated `AGENTS.md`
   Deployment section. Untested against a real Vercel deploy.
 - Rewritten root `README.md` (presentation page) and updated `AI_MEMORY.md`.
-- Icon relocation: `apps/web/public/assets/app_icon/*` deleted, `apps/web/public/app_icon/`
   untracked, plus new `apps/web/public/assets/logo_final.jfif`.
 - Modified `apps/web/src/app/(protected)/analytics/page.tsx`.
 
@@ -194,6 +209,9 @@ start of work; updating it is mandatory before handing back.**
 
 ## Handoff / Next Steps
 
+- **Home page / landing is done** (`2026-10-11`): real copy, real routes (`/login`, `/dashboard`),
+  client-side `Link` nav. Router gotcha: `typedRoutes: true` means `Link href` needs the `AppRoute`
+  union from `@/lib/routes`, not a bare `string`.
 - **Verification suite is green as of `2026-10-11`**: `bun run build` (web, 12 routes),
   `bun run check-types` (5 packages), `bun test` (33) and `bun run --filter web test` (33).
   The only failure was the dead `tasks.ts` import, now removed.

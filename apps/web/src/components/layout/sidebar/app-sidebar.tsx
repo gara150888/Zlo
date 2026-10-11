@@ -23,6 +23,7 @@ import {
 import Link from "next/link"
 
 import type { AppRoute } from "@/lib/routes"
+import { useTheme } from "next-themes"
 
 const data: {
   navMain: {
@@ -67,6 +68,12 @@ const data: {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const logoWhite = "/assets/logo_white.png"
+  const logoBlack = "/assets/logo_black.png"
+
+  const { theme } = useTheme()
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -74,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link href="/dashboard" />}>
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent text-sidebar-primary-foreground">
-                <img src="/assets/app_icon/favicon-32x32.png" alt="Zlo logo" className="size-7" />
+                <img src={theme === "dark" ? logoWhite : logoBlack} alt="Zlo logo" className="size-7" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">Zlo</span>

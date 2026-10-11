@@ -216,9 +216,9 @@ filtering, status transitions, and dashboard projections.
 
 ## Roadmap
 
+- [x] Public landing page with product-accurate copy and working routes
 - [ ] Email delivery for renewal reminders (provider selection + scheduler wiring)
 - [ ] Renewal calendar view
-- [ ] Public landing page replacing the starter hero copy
 - [ ] Broader automated coverage: cross-user access, validation failures, reminder dedupe
 - [ ] Deployment configuration and production environment docs
 
