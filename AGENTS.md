@@ -57,6 +57,22 @@ Zlo/
 - `bun db:push` - Push database schema
 - `bun db:studio` - Open database UI
 
+## Deployment
+
+- Host: Vercel, configured by root `vercel.json` in services mode.
+- **One deployable service only**: `web` (root `apps/web`, Next.js framework), public on all
+  paths via the catch-all rewrite `/(.*)`.
+- `packages/*` are **libraries, not services** — `packages/api` (tRPC routers) and
+  `packages/env` (env validation) are compiled into the web app. `packages/api` has no HTTP
+  entrypoint; its routers are mounted by `apps/web/src/app/api/trpc/[trpc]/route.ts` and auth
+  by `apps/web/src/app/api/auth/[...all]/route.ts`. Do not declare them as Vercel services.
+- No service bindings exist and none are needed: the only outbound HTTP is same-origin
+  (`/api/trpc`, `/logos/logos.json`). The tRPC client runs in the browser, where Vercel
+  bindings cannot resolve.
+- Required runtime env vars (validated by `packages/env/src/server.ts`, throws if missing):
+  `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `CORS_ORIGIN`,
+  `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NODE_ENV`.
+
 ## Better Fullstack project context
 
 `bts.jsonc` is the authority for the current Stack Graph. Its `stackParts` array owns role selection and `ownerPartId` bindings. Top-level option fields are a compatibility projection and must not become a second mutation path.

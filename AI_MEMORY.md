@@ -80,6 +80,11 @@ start of work; updating it is mandatory before handing back.**
 
 <!-- Add new entries at the TOP of the list, immediately above this line. Keep the last ~10. -->
 
+- `2026-10-11` · branch `staring-project-root` · Added Vercel deployment config (`vercel.json`, services mode) after auditing whether the repo actually has multiple services.
+   Files: `vercel.json` (new), `AGENTS.md` (new Deployment section)
+   Outcome: **Only `apps/web` is deployable.** `packages/api` is a library — no HTTP entrypoint, `exports` point at raw `src/*.ts`, `dist/` holds only `tsconfig.tsbuildinfo`, it depends on `next`, and `context.ts` imports `NextRequest`; its routers are mounted inside the Next app at `api/trpc/[trpc]/route.ts` and `api/auth/[...all]/route.ts`. `packages/env` exports only `./server` and `./web` — no runtime. No cross-service HTTP calls exist: the only fetches are same-origin `/api/trpc` and `/logos/logos.json`, with no hostnames, ports, or service discovery. Final config = single `web` service (root `apps/web`, framework nextjs) + catch-all rewrite `/(.*)` → web, **no bindings**. User confirmed single-service topology, catch-all routing, and auto-detected install.
+   Follow-up: verify `vercel dev` / a preview deploy resolves workspace installs correctly from the repo root, since `bun install` runs at root but the service root is `apps/web`. Note: `src/proxy.ts` exists but **no `middleware.ts` is wired**, so the auth redirect is currently dead code.
+
 - `2026-10-11` · branch `staring-project-root` · Rewrote root `README.md` as a GitHub project
   presentation page for the subscription-tracker product.
    Files: `README.md`
@@ -138,6 +143,8 @@ start of work; updating it is mandatory before handing back.**
 
 ## Uncommitted / In Flight (recheck with `git status`)
 
+- New `vercel.json` (Vercel services mode, single `web` service) and updated `AGENTS.md`
+  Deployment section. Untested against a real Vercel deploy.
 - Rewritten root `README.md` (presentation page) and updated `AI_MEMORY.md`.
 - Icon relocation: `apps/web/public/assets/app_icon/*` deleted, `apps/web/public/app_icon/`
   untracked, plus new `apps/web/public/assets/logo_final.jfif`.
@@ -147,12 +154,14 @@ start of work; updating it is mandatory before handing back.**
 
 ## Handoff / Next Steps
 
-- Root `README.md` is now the GitHub presentation page (positioning, features, badges, env table,
-  commands, billing math, honest status/roadmap). Working tree also holds an icon move
-  (`public/assets/app_icon/*` → `public/app_icon/*`, referenced by `app-sidebar.tsx` via
-  `/assets/app_icon/favicon-32x32.png`), a new `public/assets/logo_final.jfif`, and an edit to
-  `(protected)/analytics/page.tsx` — all uncommitted.
+- Vercel deployment is configured: root `vercel.json` in services mode with a single `web`
+  service (`apps/web`, nextjs) plus catch-all `/(.*)` rewrite. No bindings, no code changes.
+  Untested on Vercel — the open question is whether services mode resolves workspace installs
+  from the repo root when the service root is `apps/web`; verify with `vercel dev`.
 - Next frontend step per TASK.md Phase 3: detail route `/subscriptions/[id]`, then the renewal
   calendar view; reminder email delivery remains the main backend gap.
+- **Next-session trap**: do not "fix" `vercel.json` by adding `api`/`env` services — both are
+  libraries (see Session Log `2026-10-11`), and the suggested 3-service layout would fail its
+  build and break `/api/trpc` routing.
 
 
