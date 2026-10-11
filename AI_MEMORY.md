@@ -80,6 +80,21 @@ start of work; updating it is mandatory before handing back.**
 
 <!-- Add new entries at the TOP of the list, immediately above this line. Keep the last ~10. -->
 
+- `2026-10-11` · branch `staring-project-root` · Fixed the Vercel production build failure (`Invalid environment variables` at page-data collection).
+   Files: `turbo.json`
+   Outcome: Root cause was **Turbo strict env mode, not Vercel**. Turbo 2.x defaults to
+   `envMode: "strict"`, so vars not declared in `turbo.json` are stripped from task
+   environments — Vercel's own warning confirmed the 6 vars *were set on the project* but
+   `WILL NOT be available to your application`. Added a top-level `globalPassThroughEnv` array
+   (DATABASE_URL, BETTER_AUTH_SECRET, BETTER_AUTH_URL, CORS_ORIGIN, GOOGLE_CLIENT_ID,
+   GOOGLE_CLIENT_SECRET, NODE_ENV). Chose pass-through over `globalEnv` so secret rotation does
+   not invalidate the whole cache. **Verified by exact reproduction**: moved `apps/web/.env`
+   aside, ran `bunx turbo run build` with no vars → reproduced the identical Vercel failure
+   (exit 1); then loaded the 6 vars into the process env and re-ran → `Tasks: 1 successful`
+   (exit 0). `.env` restored byte-identical (734 bytes).
+   Follow-up: redeploy on Vercel to confirm. If it still fails, check the vars are enabled for
+   the target environment (Production vs Preview) — project-level presence was already proven.
+
 - `2026-10-11` · branch `staring-project-root` · Made the full build/verification pipeline complete by removing leftover dead code from the Instagram-pivot era.
    Files: deleted `packages/db/src/tasks.ts`; edited `packages/db/package.json`; edited `AI_MEMORY.md`
    Outcome: `bun run build` was already green (only `web` defines `build`), but `bun check-types`
@@ -157,6 +172,12 @@ start of work; updating it is mandatory before handing back.**
   `packages/db/package.json`; `check-types` now passes for all 5 typed packages.
 - `@Zlo/env` and `@Zlo/config` define no `check-types` script, so `turbo check-types` reports
   5 tasks, not 7. Likewise only `web` defines `build`, so `turbo build` runs 1 task.
+- **Turbo strict env mode**: any env var a task needs must be declared in `turbo.json`
+  (`globalPassThroughEnv` / `globalEnv` / per-task `env`), otherwise Turbo silently strips it.
+  This burned `2026-10-11` on Vercel — vars set on the Vercel project never reached `next build`.
+- `packages/db/src/server/crypto.ts` (+ the `@Zlo/db/server` barrel in `index.ts`) is dead
+  Instagram-pivot code reading `INSTAGRAM_ENCRYPTION_KEY`. Nothing imports it; do not add that
+  var to `globalPassThroughEnv` unless those exports are wired up.
 
 ---
 
@@ -176,10 +197,10 @@ start of work; updating it is mandatory before handing back.**
 - **Verification suite is green as of `2026-10-11`**: `bun run build` (web, 12 routes),
   `bun run check-types` (5 packages), `bun test` (33) and `bun run --filter web test` (33).
   The only failure was the dead `tasks.ts` import, now removed.
-- Vercel deployment is configured: root `vercel.json` in services mode with a single `web`
-  service (`apps/web`, nextjs) plus catch-all `/(.*)` rewrite. No bindings, no code changes.
-  Untested on Vercel — the open question is whether services mode resolves workspace installs
-  from the repo root when the service root is `apps/web`; verify with `vercel dev`.
+- **Vercel deploy is the open item.** `turbo.json` now declares `globalPassThroughEnv` for the 6
+  app vars, verified by a local reproduction of the Vercel failure. `vercel.json` (services mode,
+  single `web` service + catch-all `/(.*)`) is untested on Vercel — check whether services mode
+  resolves workspace installs from the repo root when the service root is `apps/web`, via `vercel dev`.
 - Next frontend step per TASK.md Phase 3: detail route `/subscriptions/[id]`, then the renewal
   calendar view; reminder email delivery remains the main backend gap.
 - **Next-session trap**: do not "fix" `vercel.json` by adding `api`/`env` services — both are
