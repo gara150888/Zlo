@@ -13,7 +13,7 @@ export default function Hero() {
       <Dither color="#9fb4ff" scale={3} speed={1} interactive={false} pixelSize={3} className="-z-10 opacity-10" />
 
       <div className="flex max-w-xl flex-col items-center gap-6 px-6 text-center z-10">
-        <Announcement href="/dashboard" tag="New">
+        <Announcement href="/dashboard" tag="New" className="hidden md:flex">
           Renewal reminders and spending analytics
         </Announcement>
 
