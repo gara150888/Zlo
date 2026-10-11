@@ -64,16 +64,16 @@ export default function AnalyticsPage() {
 
   const summary: DashboardSummary | undefined = monthlySpending
     ? {
-        totalSubscriptions: monthlySpending.totalCount,
-        activeSubscriptions: monthlySpending.activeCount,
-        upcomingRenewalsCount: upcomingCosts?.next30Days.count ?? 0,
-        currencies: monthlySpending.currencies.map((entry) => ({
-          currency: entry.currency,
-          monthlyEstimateMinor: entry.totalMonthlyMinor,
-          annualEstimateMinor: entry.totalAnnualMinor,
-          activeCount: monthlySpending.activeCount,
-        })),
-      }
+      totalSubscriptions: monthlySpending.totalCount,
+      activeSubscriptions: monthlySpending.activeCount,
+      upcomingRenewalsCount: upcomingCosts?.next30Days.count ?? 0,
+      currencies: monthlySpending.currencies.map((entry) => ({
+        currency: entry.currency,
+        monthlyEstimateMinor: entry.totalMonthlyMinor,
+        annualEstimateMinor: entry.totalAnnualMinor,
+        activeCount: monthlySpending.activeCount,
+      })),
+    }
     : undefined;
 
   return (
