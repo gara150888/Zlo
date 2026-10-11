@@ -80,10 +80,25 @@ start of work; updating it is mandatory before handing back.**
 
 <!-- Add new entries at the TOP of the list, immediately above this line. Keep the last ~10. -->
 
+- `2026-10-11` · branch `staring-project-root` · Made the full build/verification pipeline complete by removing leftover dead code from the Instagram-pivot era.
+   Files: deleted `packages/db/src/tasks.ts`; edited `packages/db/package.json`; edited `AI_MEMORY.md`
+   Outcome: `bun run build` was already green (only `web` defines `build`), but `bun check-types`
+   failed with `TS2307: Cannot find module './schema/tasks'`. The `task` pgTable and its schema
+   file were deleted in commit `e1f3664` (product pivot to subscriptions), yet `src/tasks.ts` and
+   the `./schema/task` package export survived. Nothing in the repo imports either — verified by
+   grep for `from ".*tasks"`, `@Zlo/db/tasks`, `createTask`, etc. Deleted both. Verified after:
+   `check-types` 5/5 pass, `build` web ✓ (12 routes), `bun test` 33 pass, web tests 33 pass.
+   Follow-up: root `bun build`/`bun check-types` are green; still unverified on Vercel. A real
+   production `next build` run needs `DATABASE_URL` present (currently satisfied by local `.env`).
+
 - `2026-10-11` · branch `staring-project-root` · Added Vercel deployment config (`vercel.json`, services mode) after auditing whether the repo actually has multiple services.
    Files: `vercel.json` (new), `AGENTS.md` (new Deployment section)
    Outcome: **Only `apps/web` is deployable.** `packages/api` is a library — no HTTP entrypoint, `exports` point at raw `src/*.ts`, `dist/` holds only `tsconfig.tsbuildinfo`, it depends on `next`, and `context.ts` imports `NextRequest`; its routers are mounted inside the Next app at `api/trpc/[trpc]/route.ts` and `api/auth/[...all]/route.ts`. `packages/env` exports only `./server` and `./web` — no runtime. No cross-service HTTP calls exist: the only fetches are same-origin `/api/trpc` and `/logos/logos.json`, with no hostnames, ports, or service discovery. Final config = single `web` service (root `apps/web`, framework nextjs) + catch-all rewrite `/(.*)` → web, **no bindings**. User confirmed single-service topology, catch-all routing, and auto-detected install.
-   Follow-up: verify `vercel dev` / a preview deploy resolves workspace installs correctly from the repo root, since `bun install` runs at root but the service root is `apps/web`. Note: `src/proxy.ts` exists but **no `middleware.ts` is wired**, so the auth redirect is currently dead code.
+   Follow-up: verify `vercel dev` / a preview deploy resolves workspace installs correctly from the repo root, since `bun install` runs at root but the service root is `apps/web`.
+   **Correction (`2026-10-11`, later session):** the note below about `src/proxy.ts` being dead
+   code was WRONG. `bun run build` prints `ƒ Proxy (Middleware)`, so Next.js 16 does load
+   `src/proxy.ts` as middleware — the convention was renamed from `middleware.ts` to `proxy.ts`
+   in Next 16. The auth redirect is active; do not "fix" it by creating a `middleware.ts`.
 
 - `2026-10-11` · branch `staring-project-root` · Rewrote root `README.md` as a GitHub project
   presentation page for the subscription-tracker product.
@@ -137,7 +152,11 @@ start of work; updating it is mandatory before handing back.**
   `bun run --filter web test`.
 - `packages/api` ships `dist/` and `.turbo/` build outputs locally; these are gitignored but can
   make a repo look stale/compiled when grepping. Prefer `src/`.
-- `packages/db/src/tasks.ts` imports from deleted/untracked `./schema/tasks`.
+- ~~`packages/db/src/tasks.ts` imports from deleted/untracked `./schema/tasks`.~~ **Resolved
+  `2026-10-11`** — dead file deleted, dangling `./schema/task` export removed from
+  `packages/db/package.json`; `check-types` now passes for all 5 typed packages.
+- `@Zlo/env` and `@Zlo/config` define no `check-types` script, so `turbo check-types` reports
+  5 tasks, not 7. Likewise only `web` defines `build`, so `turbo build` runs 1 task.
 
 ---
 
@@ -154,6 +173,9 @@ start of work; updating it is mandatory before handing back.**
 
 ## Handoff / Next Steps
 
+- **Verification suite is green as of `2026-10-11`**: `bun run build` (web, 12 routes),
+  `bun run check-types` (5 packages), `bun test` (33) and `bun run --filter web test` (33).
+  The only failure was the dead `tasks.ts` import, now removed.
 - Vercel deployment is configured: root `vercel.json` in services mode with a single `web`
   service (`apps/web`, nextjs) plus catch-all `/(.*)` rewrite. No bindings, no code changes.
   Untested on Vercel — the open question is whether services mode resolves workspace installs
@@ -162,6 +184,7 @@ start of work; updating it is mandatory before handing back.**
   calendar view; reminder email delivery remains the main backend gap.
 - **Next-session trap**: do not "fix" `vercel.json` by adding `api`/`env` services — both are
   libraries (see Session Log `2026-10-11`), and the suggested 3-service layout would fail its
-  build and break `/api/trpc` routing.
+  build and break `/api/trpc` routing. Also do not create a `src/middleware.ts`: Next 16 uses
+  `src/proxy.ts`, which is already live.
 
 

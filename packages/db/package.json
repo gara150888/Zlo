@@ -16,10 +16,6 @@
       "types": "./src/schema/index.ts",
       "default": "./src/schema/index.ts"
     },
-    "./schema/task": {
-      "types": "./src/schema/tasks/index.ts",
-      "default": "./src/schema/tasks/index.ts"
-    },
     "./schema/*": {
       "types": "./src/schema/*/index.ts",
       "default": "./src/schema/*/index.ts"
