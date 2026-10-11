@@ -1,7 +1,10 @@
 "use client";
 
-import type { AnchorHTMLAttributes, ReactNode } from "react";
+import type { AnchorHTMLAttributes, ComponentProps, ReactNode } from "react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
+
+import type { AppRoute } from "@/lib/routes";
 
 const css = `
 @keyframes ui-ann-shine{0%,60%{translate:-100% 0}100%{translate:250% 0}}
@@ -25,19 +28,19 @@ export function Announcement({
   arrow = true,
   className,
   children,
+  href,
   ...props
 }: AnnouncementProps) {
-  return (
-    <a
-      {...props}
-      className={cn(
-        "group/ann relative inline-flex w-fit max-w-full items-center gap-2.5 overflow-hidden rounded-full border border-border bg-card/80 py-1 pr-3.5 pl-1 text-sm text-foreground shadow-sm backdrop-blur outline-none",
-        "transition-[border-color,box-shadow,scale] duration-200 hover:border-primary/40 hover:shadow-md hover:shadow-primary/10 focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.98]",
-        !tag && "pl-3.5",
-        shine && "ui-ann-shine",
-        className,
-      )}
-    >
+  const classes = cn(
+    "group/ann relative inline-flex w-fit max-w-full items-center gap-2.5 overflow-hidden rounded-full border border-border bg-card/80 py-1 pr-3.5 pl-1 text-sm text-foreground shadow-sm backdrop-blur outline-none",
+    "transition-[border-color,box-shadow,scale] duration-200 hover:border-primary/40 hover:shadow-md hover:shadow-primary/10 focus-visible:ring-[3px] focus-visible:ring-ring/50 active:scale-[0.98]",
+    !tag && "pl-3.5",
+    shine && "ui-ann-shine",
+    className,
+  );
+
+  const inner = (
+    <>
       <style href="ui-announcement" precedence="default">
         {css}
       </style>
@@ -54,12 +57,32 @@ export function Announcement({
           strokeWidth={1.75}
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="ui-ann-arrow -ml-0.5 size-4 shrink-0 text-muted-foreground transition-colors group-hover/ann:text-foreground"
+          className="ui-ann-arrow -ml-0.5 size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-foreground"
         >
           <path className="stem" pathLength={1} d="M3 8h9.5" />
           <path className="head" d="M6.5 4.5 10 8l-3.5 3.5" />
         </svg>
       )}
+    </>
+  );
+
+  // Internal routes stay client-side navigations; anything external (or no href)
+  // falls back to a plain anchor so the component can still be used statically.
+  if (typeof href === "string" && href.startsWith("/")) {
+    return (
+      <Link
+        href={href as AppRoute}
+        className={classes}
+        {...(props as Omit<ComponentProps<typeof Link>, "href">)}
+      >
+        {inner}
+      </Link>
+    );
+  }
+
+  return (
+    <a href={href} className={classes} {...props}>
+      {inner}
     </a>
   );
 }
