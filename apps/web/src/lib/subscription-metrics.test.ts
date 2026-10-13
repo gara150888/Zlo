@@ -5,7 +5,9 @@ import {
   categoryBreakdownByCurrency,
   monthlyEquivalentMinor,
   projectUpcomingMonths,
+  renewalOccurrencesInMonth,
   toDateKey,
+  toDayKey,
   totalsByCurrency,
   upcomingChargeTotal,
   upcomingRenewals,
@@ -313,5 +315,142 @@ describe("upcomingChargeTotal", () => {
     );
 
     expect(totals).toEqual({ USD: 3000, EUR: 700 });
+  });
+});
+
+describe("renewalOccurrencesInMonth", () => {
+  it("returns every occurrence inside the month, sorted by date", () => {
+    const occurrences = renewalOccurrencesInMonth(
+      [
+        makeSubscription({ id: "a", amountMinor: 1000, nextBillingDate: "2026-10-20" }),
+        makeSubscription({ id: "b", amountMinor: 2500, nextBillingDate: "2026-10-02" }),
+      ],
+      new Date(Date.UTC(2026, 9, 15)),
+    );
+
+    expect(
+      occurrences.map((occurrence) => [
+        occurrence.subscription.id,
+        occurrence.date,
+      ]),
+    ).toEqual([
+      ["b", "2026-10-02"],
+      ["a", "2026-10-20"],
+    ]);
+  });
+
+  it("projects weekly subscriptions onto every week of the month", () => {
+    const occurrences = renewalOccurrencesInMonth(
+      [
+        makeSubscription({
+          id: "a",
+          interval: "week",
+          intervalCount: 1,
+          nextBillingDate: "2026-10-01",
+        }),
+      ],
+      new Date(Date.UTC(2026, 9, 15)),
+    );
+
+    // 01, 08, 15, 22, 29 October.
+    expect(occurrences.map((occurrence) => occurrence.date)).toEqual([
+      "2026-10-01",
+      "2026-10-08",
+      "2026-10-15",
+      "2026-10-22",
+      "2026-10-29",
+    ]);
+  });
+
+  it("keeps occurrences earlier in the current month so the calendar is complete", () => {
+    const occurrences = renewalOccurrencesInMonth(
+      [makeSubscription({ id: "a", nextBillingDate: "2026-10-03" })],
+      new Date(Date.UTC(2026, 9, 15)),
+    );
+
+    expect(occurrences.map((occurrence) => occurrence.date)).toEqual([
+      "2026-10-03",
+    ]);
+  });
+
+  it("skips stale billing dates forward into the month", () => {
+    const monthly = renewalOccurrencesInMonth(
+      [makeSubscription({ id: "a", nextBillingDate: "2026-09-05" })],
+      new Date(Date.UTC(2026, 9, 15)),
+    );
+    // September is skipped entirely; only the October charge remains.
+    expect(monthly.map((occurrence) => occurrence.date)).toEqual([
+      "2026-10-05",
+    ]);
+
+    const yearly = renewalOccurrencesInMonth(
+      [
+        makeSubscription({
+          id: "b",
+          interval: "year",
+          intervalCount: 1,
+          nextBillingDate: "2020-03-15",
+        }),
+      ],
+      new Date(Date.UTC(2026, 2, 20)),
+    );
+    expect(yearly.map((occurrence) => occurrence.date)).toEqual([
+      "2026-03-15",
+    ]);
+  });
+
+  it("does not leak occurrences from neighbouring months", () => {
+    const occurrences = renewalOccurrencesInMonth(
+      [
+        makeSubscription({
+          id: "a",
+          interval: "week",
+          intervalCount: 1,
+          nextBillingDate: "2026-09-30",
+        }),
+      ],
+      new Date(Date.UTC(2026, 9, 15)),
+    );
+
+    // Only the four October charges; September itself is excluded.
+    expect(occurrences.map((occurrence) => occurrence.date)).toEqual([
+      "2026-10-07",
+      "2026-10-14",
+      "2026-10-21",
+      "2026-10-28",
+    ]);
+  });
+
+  it("clamps month-end billing dates to the target month length", () => {
+    const occurrences = renewalOccurrencesInMonth(
+      [makeSubscription({ id: "a", nextBillingDate: "2026-01-31" })],
+      new Date(Date.UTC(2026, 1, 10)),
+    );
+
+    expect(occurrences.map((occurrence) => occurrence.date)).toEqual([
+      "2026-02-28",
+    ]);
+  });
+
+  it("excludes subscriptions that do not recur", () => {
+    expect(
+      renewalOccurrencesInMonth(
+        [
+          makeSubscription({ id: "a", status: "cancelled", nextBillingDate: "2026-10-20" }),
+          makeSubscription({ id: "b", status: "paused", nextBillingDate: "2026-10-20" }),
+          makeSubscription({ id: "c", status: "trial", nextBillingDate: "2026-10-20" }),
+          makeSubscription({ id: "d", status: "expired", nextBillingDate: "2026-10-20" }),
+          makeSubscription({ id: "e", nextBillingDate: null }),
+        ],
+        new Date(Date.UTC(2026, 9, 15)),
+      ),
+    ).toEqual([]);
+  });
+});
+
+describe("toDayKey", () => {
+  it("formats a date as YYYY-MM-DD", () => {
+    expect(toDayKey(new Date(Date.UTC(2026, 0, 5)))).toBe("2026-01-05");
+    expect(toDayKey(new Date(Date.UTC(2026, 11, 31)))).toBe("2026-12-31");
   });
 });

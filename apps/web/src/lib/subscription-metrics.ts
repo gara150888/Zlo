@@ -176,6 +176,12 @@ export function toDateKey(date: Date): string {
   return `${year}-${month}`;
 }
 
+/** `YYYY-MM-DD` key for a UTC date. */
+export function toDayKey(date: Date): string {
+  const day = `${date.getUTCDate()}`.padStart(2, "0");
+  return `${toDateKey(date)}-${day}`;
+}
+
 /** Advances a date by `count` intervals, clamping to the target month length. */
 export function advanceDate(
   date: Date,
@@ -201,7 +207,7 @@ function firstOfMonth(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
 }
 
-function todayLocalUtc(): Date {
+export function todayLocalUtc(): Date {
   const now = new Date();
   return new Date(
     Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()),
@@ -317,6 +323,61 @@ export function upcomingChargeTotal(
       (totals[subscription.currency] ?? 0) + subscription.amountMinor;
   }
   return totals;
+}
+
+export type RenewalOccurrence = {
+  subscription: Subscription;
+  /** Billing day as `YYYY-MM-DD`. */
+  date: string;
+};
+
+/**
+ * Projects the billing occurrences of every recurring subscription that
+ * land inside the month containing `month`. Days already past in the
+ * current month are kept so a calendar can render the whole month;
+ * paused, trial, cancelled and expired subscriptions never recur and
+ * are skipped. Occurrences are sorted by date, then by name.
+ */
+export function renewalOccurrencesInMonth(
+  subscriptions: Subscription[],
+  month: Date,
+): RenewalOccurrence[] {
+  const start = firstOfMonth(month);
+  const end = new Date(
+    Date.UTC(start.getUTCFullYear(), start.getUTCMonth() + 1, 1),
+  );
+
+  const occurrences: RenewalOccurrence[] = [];
+  for (const subscription of subscriptions) {
+    if (!isRecurring(subscription) || !subscription.nextBillingDate) continue;
+    let occurrence = parseDateOnly(subscription.nextBillingDate);
+    // A stale billing date in the past still recurs; skip forward so the
+    // projection always starts from the requested month.
+    let guard = 0;
+    while (occurrence < start && guard < 600) {
+      occurrence = advanceDate(
+        occurrence,
+        subscription.interval,
+        subscription.intervalCount,
+      );
+      guard += 1;
+    }
+    while (occurrence < end && guard < 600) {
+      occurrences.push({ subscription, date: toDayKey(occurrence) });
+      occurrence = advanceDate(
+        occurrence,
+        subscription.interval,
+        subscription.intervalCount,
+      );
+      guard += 1;
+    }
+  }
+
+  return occurrences.sort(
+    (a, b) =>
+      a.date.localeCompare(b.date) ||
+      a.subscription.name.localeCompare(b.subscription.name),
+  );
 }
 
 export function isSubscriptionStatus(value: string): value is SubscriptionStatus {
