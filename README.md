@@ -53,6 +53,12 @@ your own database records.
   clearly labelled as recurring-cost estimates, not historical payments.
 - **Renewal reminders (domain layer)** — reminder records, dedupe keys, pending / sent /
   failed states, cancellation on delete or cancel.
+- **Renewal calendar** — a month grid on `/renewals` that projects real billing cycles
+  (weekly / monthly / yearly), shows each subscription's logo on the days it charges, and
+  keeps the view, month, selected day and window in the URL so the flow survives reloads.
+- **SEO foundations** — unique per-page metadata, Open Graph and Twitter cards with a
+  generated `opengraph-image`, `robots.txt` with a sitemap directive, a sitemap of the
+  public routes, and schema.org JSON-LD (Organization / WebSite / WebApplication).
 - **Authentication** — Better Auth with Google sign-in, session-based protected routes,
   and ownership enforced on every procedure.
 - **Polished UI** — shadcn-style components, responsive layout, dark mode, loading
@@ -60,9 +66,9 @@ your own database records.
 
 ### Project status
 
-Zlo is under active development. The authentication, database schema, tRPC API, and
-core dashboard / subscriptions UI are functional. Remaining work is listed in the
-[Roadmap](#roadmap): email delivery for reminders, the public landing page, and
+Zlo is under active development. The authentication, database schema, tRPC API, dashboard,
+subscriptions UI, renewal calendar, public landing page, and SEO metadata are functional.
+Remaining work is listed in the [Roadmap](#roadmap): email delivery for reminders and
 broader automated test coverage.
 
 ---
@@ -75,6 +81,8 @@ broader automated test coverage.
 | Billing model | `week` / `month` / `year` + `intervalCount` for quarterly and other cycles; dates stored as plain `YYYY-MM-DD` |
 | Money | Integer minor units (`₹499.00 → 49900`), ISO currency codes enforced by a DB check constraint, no floating-point money |
 | Dashboard | Active subscription count, monthly + annual recurring cost per currency, next-30-days renewals and charge total |
+| Renewal calendar | Month grid projecting real billing cycles, per-subscription logos on charge days, URL-persisted month / day / view |
+| SEO | `generateMetadata`-style metadata with template titles, OG + Twitter cards with a generated 1200×630 image, `robots.txt`, `sitemap.xml`, JSON-LD |
 | Analytics | 12-month projection per calendar month, category breakdown with percentages, currency-aware totals |
 | Reminders | Per-user reminder preferences, scheduled reminder records, `dedupeKey` to prevent duplicate delivery, retry/status tracking |
 | Security | Server-side session checks, ownership filters in every query, Zod validation on all input, no client-supplied user IDs |
@@ -115,8 +123,9 @@ Zlo/
 └── TASK.md                   # Product spec and working rules
 ```
 
-Application routes: `/login`, `/dashboard`, `/subscriptions`, `/renewals`,
-`/analytics`, `/settings`, `/calendar` (in progress).
+Application routes: `/login`, `/dashboard`, `/subscriptions`, `/renewals` (renewal
+calendar), `/analytics`, `/settings`, `/calendar` (placeholder), plus the generated
+`/robots.txt`, `/sitemap.xml` and `/opengraph-image`.
 
 ---
 
@@ -217,10 +226,11 @@ filtering, status transitions, and dashboard projections.
 ## Roadmap
 
 - [x] Public landing page with product-accurate copy and working routes
+- [x] Renewal calendar view
+- [x] SEO metadata, Open Graph image, robots.txt, sitemap, JSON-LD
+- [x] Deployment configuration (Vercel services mode, single `web` service)
 - [ ] Email delivery for renewal reminders (provider selection + scheduler wiring)
-- [ ] Renewal calendar view
 - [ ] Broader automated coverage: cross-user access, validation failures, reminder dedupe
-- [ ] Deployment configuration and production environment docs
 
 ---
 
