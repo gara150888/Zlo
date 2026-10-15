@@ -70,11 +70,17 @@ start of work; updating it is mandatory before handing back.**
   redirects. Web app dev port is 3000.
 - **Env**: `packages/env` validates env with zod; copy `.env.example` → `.env` per app/service
   before running database-backed services. `.env*.local` and `.env` are gitignored.
-- **Renewals page** (`/renewals`): month-grid `RenewalsCalendar` component
+- **Renewals page** (`/renewals`): month-grid `RenewalsCalendar`
   (`components/dashboard/renewals-calendar.tsx`) + list toggle. State source is the URL:
-  `?view=calendar|list&month=YYYY-MM&day=YYYY-MM-DD&days=7|30|60|90`; the view is also mirrored in
-  localStorage key `zlo:renewals-view`. Occurrence math lives in `renewalOccurrencesInMonth()` in
+  `?view=calendar|list&month=YYYY-MM&day=YYYY-MM-DD&days=7|30|60|90` (view also mirrored in
+  localStorage key `zlo:renewals-view`). Occurrence math: `renewalOccurrencesInMonth()` in
   `apps/web/src/lib/subscription-metrics.ts`. `/calendar` is an unlinked placeholder stub.
+- **SEO**: `apps/web/src/lib/seo.ts` owns the site origin (`BETTER_AUTH_URL`, trailing slash
+  stripped, localhost fallback), title/description/keywords. Routes: `app/robots.txt`,
+  `app/sitemap.xml` (public routes only — `/` and `/login`), `app/opengraph-image.tsx`
+  (1200×630 via `next/og`, brand `#ff5e1f`). JSON-LD via `components/seo/json-ld.tsx`
+  (escaped serialization) is emitted from the root layout. Client pages cannot export metadata —
+  `/login` gets its title from a server `app/login/layout.tsx`.
 - **Generator safety**: `bts.jsonc` owns the stack graph. Before recipe-owned edits run
   `create-better-fullstack recipes check --json`; use `doctor --json` before repairing drift.
   Managed regions are marked `<!-- <better-fullstack:recipes ...> -->` in `AGENTS.md`/`CLAUDE.md` —
@@ -86,39 +92,44 @@ start of work; updating it is mandatory before handing back.**
 
 <!-- Add new entries at the TOP of the list, immediately above this line. Keep the last ~10. -->
 
-- `2026-10-13` · branch `staring-project-root` · Added a renewal calendar to `/renewals` with a
-   URL-persistent flow.
-   Files: `apps/web/src/app/(protected)/renewals/page.tsx` (rewritten),
-   `apps/web/src/components/dashboard/renewals-calendar.tsx` (new),
-   `apps/web/src/lib/subscription-metrics.ts` (+ tests)
-   Outcome: Month grid (Monday-first, 6 fixed weeks) projects real billing cycles via the new
-   `renewalOccurrencesInMonth()` helper; day cells show subscription **logos** (ProviderAvatar,
-   initials fallback, +N overflow), count badge, urgent/in-month styling; clicking a day opens a
-   detail panel with logo, provider/category/cadence and amount. Calendar/List toggle, month, day
-   and window all persist in the URL (`view`/`month`/`day`/`days`), view also mirrored to
-   localStorage, so reloads, shared links and back/forward restore the exact flow. Page content is
-   wrapped in `<Suspense>` because `useSearchParams` needs a boundary during prerender.
-   Gotchas: `typedRoutes: true` also brands `router.push/replace` hrefs — cast to `AppRoute` from
-   `@/lib/routes` (query string is runtime-only). A stale `.next/types/validator.ts` referencing the
-   deleted `(protected)/temp` route broke `check-types`; deleted `.next/types` (a running dev server
-   locks `.next/dev/cache`, so a full `.next` delete fails).
-   Verified: `bun run check-types` 5/5, `bun run --filter web test` 41/41, `bun run build` green
-   (12 routes, `/renewals` static).
+- `2026-10-14` · branch `staring-project-root` · Implemented the SEO stack from the user's research
+   guide into `apps/web`.
+   Files: `apps/web/src/lib/seo.ts` (new), `apps/web/src/app/layout.tsx` (metadata + JSON-LD),
+   `apps/web/src/app/robots.ts` (new), `apps/web/src/app/sitemap.ts` (new),
+   `apps/web/src/app/opengraph-image.tsx` (new), `apps/web/src/components/seo/json-ld.tsx` (new),
+   `apps/web/src/app/login/layout.tsx` (new)
+   Outcome: Root metadata has `metadataBase`, template titles, a 51–350-char description, keywords,
+   OG + Twitter (`summary_large_image`), canonical and robots directives. `robots.txt` allows `/`,
+   disallows app routes, points at the sitemap (crawler guidance only — auth still guards private
+   routes). `sitemap.xml` lists only `/` and `/login`. A 1200×630 `opengraph-image` is generated at
+   build via `next/og` and feeds both og:image and twitter:image. Site-level JSON-LD
+   (Organization/WebSite/WebApplication) is emitted in the root layout with `\u003c`/U+2028/U+2029
+   escaping so structured data stays XSS-safe. `/login` gets its unique title from a server layout
+   (its page is a client component and cannot export metadata). `BETTER_AUTH_URL` doubles as the
+   canonical site origin; localhost fallback keeps dev builds working.
+   Verified live on the dev server (robots.txt, sitemap.xml, PNG og:image, full head tags on `/`,
+   `Sign in · Zlo` on `/login`), plus `check-types` 5/5, web tests 41/41, `build` green
+   (14 routes incl. robots.txt / sitemap.xml / opengraph-image).
    Follow-up: none.
 
-- `2026-10-11` · branch `staring-project-root` · Fixed Vercel build failure (Turbo strict env mode
-   stripped required vars) by adding `globalPassThroughEnv` to `turbo.json`; verified by exact
-   reproduction. Follow-up: redeploy on Vercel to confirm.
+- `2026-10-13` · branch `staring-project-root` · Added a renewal calendar to `/renewals` with a
+   URL-persistent flow (committed as `779b7b2`).
+   Files: `apps/web/src/app/(protected)/renewals/page.tsx`,
+   `apps/web/src/components/dashboard/renewals-calendar.tsx` (new),
+   `apps/web/src/lib/subscription-metrics.ts` (+ `renewalOccurrencesInMonth()` + tests)
+   Outcome: Month grid projects real billing cycles; day cells show subscription logos; view /
+   month / day / window live in the URL (list view + window filter kept). `<Suspense>` wraps the
+   content because `useSearchParams` needs a prerender boundary. Details in the repo map above.
+   Follow-up: none.
 
-- `2026-10-11` · branch `staring-project-root` · Landing page copy/dead-link/client-nav fixes and
-   removal of dead Instagram-pivot code (`packages/db/src/tasks.ts`). Verification suite went fully
-   green (check-types 5/5, build, 33+33 tests). Gotcha: `next.config.ts` sets `typedRoutes: true`,
-   so `Link href` needs the `AppRoute` union from `@/lib/routes`, not a bare `string`.
+- `2026-10-11` · branch `staring-project-root` · Fixed the Vercel build failure (Turbo strict env
+   mode stripped required vars) via `globalPassThroughEnv` in `turbo.json`; landing-page
+   copy/dead-link/client-nav fixes; removed dead Instagram-pivot code (`packages/db/src/tasks.ts`);
+   added `vercel.json` (single `web` service). Verification suite went fully green.
 
 - `2026-10-10` · branches `master`/`db-and-router-and-services-setup` · Created `AI_MEMORY.md` +
    wired read/update rules into `AGENTS.md`/`CLAUDE.md`; implemented the tRPC router suite
-   (subscription, dashboard, reminder, reminderPreference, analytics) and `@Zlo/zod` schemas; fixed
-   `@Zlo/zod` package configuration.
+   (subscription, dashboard, reminder, reminderPreference, analytics) and `@Zlo/zod` schemas.
 
 ---
 
@@ -128,8 +139,7 @@ start of work; updating it is mandatory before handing back.**
 - `2026-10-10` — AI memory is a single committed file (`AI_MEMORY.md`) rather than per-session
   notes: uncommitted or per-machine notes are invisible to the next machine/session.
 - `2026-10-13` — Page-level UI state (view, month, day, filters) on `/renewals` is owned by URL
-  search params, with localStorage only as the first-visit fallback for the view. Keeps flows
-  shareable and back/forward-correct without a second state container.
+  search params, with localStorage only as the first-visit fallback for the view.
 
 ---
 
@@ -141,50 +151,52 @@ start of work; updating it is mandatory before handing back.**
 
 ## Known Issues / Tech Debt
 
-- `bun test` at the root only covers `@Zlo/api`; `apps/web` has a vitest setup (jsdom, Testing
-  Library) but is not in the root `test` script — web tests must be run with
-  `bun run --filter web test`.
-- `packages/api` ships `dist/` and `.turbo/` build outputs locally; these are gitignored but can
-  make a repo look stale/compiled when grepping. Prefer `src/`.
-- `@Zlo/env` and `@Zlo/config` define no `check-types` script, so `turbo check-types` reports
-  5 tasks, not 7. Likewise only `web` defines `build`, so `turbo build` runs 1 task.
+- `bun test` at the root only covers `@Zlo/api`; web tests need `bun run --filter web test`
+  (vitest + jsdom + Testing Library is not in the root `test` script).
+- `packages/api` ships `dist/` and `.turbo/` outputs locally; gitignored, but they make the repo
+  look stale/compiled when grepping. Prefer `src/`.
+- `@Zlo/env` and `@Zlo/config` define no `check-types` script (so `turbo check-types` reports 5
+  tasks, not 7) and only `web` defines `build` (so `turbo build` runs 1 task).
 - **Turbo strict env mode**: any env var a task needs must be declared in `turbo.json`
   (`globalPassThroughEnv` / `globalEnv` / per-task `env`), otherwise Turbo silently strips it.
-- **Stale `.next/types`**: `check-types`/`build` can fail on `.next/types/validator.ts` referencing
-  a deleted route. Fix: delete `apps/web/.next/types` (a running dev server locks
+- **Stale `.next/types`**: `check-types`/`build` can fail on `.next/types/validator.ts`
+  referencing a deleted route. Fix: delete `apps/web/.next/types` (a running dev server locks
   `.next/dev/cache`, so a full `.next` deletion fails on Windows).
-- `packages/db/src/server/crypto.ts` (+ the `@Zlo/db/server` barrel in `index.ts`) is dead
-  Instagram-pivot code reading `INSTAGRAM_ENCRYPTION_KEY`. Nothing imports it; do not add that
-  var to `globalPassThroughEnv` unless those exports are wired up.
+- `packages/db/src/server/crypto.ts` (+ the `@Zlo/db/server` barrel) is dead Instagram-pivot code
+  reading `INSTAGRAM_ENCRYPTION_KEY`. Nothing imports it.
 - `/calendar` is an unlinked placeholder page; the renewal calendar now lives on `/renewals`.
 - **typedRoutes gotcha**: with `typedRoutes: true`, both `Link href` and `router.push/replace`
   hrefs reject a bare `string` — cast to the `AppRoute` union in `@/lib/routes` (the query string
-  is runtime-only, `router.*(href, { scroll: false })` keeps the scroll position).
+  is runtime-only; `router.*(href, { scroll: false })` keeps scroll position).
 
 ---
 
 ## Uncommitted / In Flight (recheck with `git status`)
 
-- Renewal calendar work: modified `apps/web/src/app/(protected)/renewals/page.tsx`,
-  `apps/web/src/lib/subscription-metrics.ts`, `apps/web/src/lib/subscription-metrics.test.ts`;
-  new `apps/web/src/components/dashboard/renewals-calendar.tsx`; this file. All uncommitted
-  (no-commit-without-approval rule) but fully verified (check-types 5/5, web tests 41/41, build
-  green).
+- SEO implementation only (the renewal calendar is committed as `779b7b2`): new
+  `apps/web/src/lib/seo.ts`, `apps/web/src/app/robots.ts`, `apps/web/src/app/sitemap.ts`,
+  `apps/web/src/app/opengraph-image.tsx`, `apps/web/src/components/seo/json-ld.tsx`,
+  `apps/web/src/app/login/layout.tsx`; modified `apps/web/src/app/layout.tsx`, `README.md`
+  and this file. Verified green (check-types 5/5, web tests 41/41, build 14 routes).
 
 ---
 
 ## Handoff / Next Steps
 
-- **Renewal calendar is done** (`2026-10-13`): `/renewals` defaults to the calendar; URL params keep
-  view/month/day/window; day cells show provider logos. Verification suite green:
-  `bun run check-types` (5/5), `bun run --filter web test` (41/41), `bun run build` (12 routes).
-- **Vercel deploy is still the open item.** `turbo.json` declares `globalPassThroughEnv` for the 6
-  app vars (verified by local reproduction of the failure). `vercel.json` (services mode, single
-  `web` service + catch-all `/(.*)`) is untested on Vercel — check whether services mode resolves
-  workspace installs from the repo root when the service root is `apps/web`, via `vercel dev`.
+- **Renewal calendar is done** (committed `779b7b2`): `/renewals` defaults to the calendar; URL
+  params keep view/month/day/window; day cells show provider logos.
+- **SEO stack is done** (`2026-10-14`, uncommitted): metadata/OG/Twitter/canonical, robots.txt,
+  sitemap.xml, generated OG image, JSON-LD graph, unique `/login` metadata. Live-verified.
+- **Vercel deploy is still the open item.** `turbo.json` declares `globalPassThroughEnv` for the
+  6 app vars (verified by local reproduction). `vercel.json` (services mode, single `web` service
+  + catch-all `/(.*)`) is untested — check via `vercel dev` whether services mode resolves
+  workspace installs from the repo root when the service root is `apps/web`.
+- After deploying: point `BETTER_AUTH_URL` at the real origin (it is the SEO canonical URL too),
+  re-check `/robots.txt`, `/sitemap.xml` and `og:image` on the live domain, and validate the
+  JSON-LD with Google's Rich Results Test.
 - Next frontend step per TASK.md Phase 3: detail route `/subscriptions/[id]`; decide whether the
   `/calendar` stub should link to `/renewals` or be removed. Reminder email delivery remains the
   main backend gap.
 - **Next-session trap**: do not "fix" `vercel.json` by adding `api`/`env` services — both are
-  libraries, and the suggested 3-service layout would fail its build and break `/api/trpc` routing.
-  Do not create `src/middleware.ts`: Next 16 uses `src/proxy.ts`, which is already live.
+  libraries, and a 3-service layout would fail its build and break `/api/trpc` routing. Do not
+  create `src/middleware.ts`: Next 16 uses `src/proxy.ts`, which is already live.
